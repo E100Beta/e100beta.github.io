@@ -136,6 +136,9 @@ label {
     color: #fff;
     border: 1px solid #058;
 }
+#toggle:checked ~ label:hover {
+    background: #3ad;
+}
 
 .menu {
     position: absolute;
@@ -150,16 +153,21 @@ label {
 .menu ul {
     margin-top: 60px;
 }
-.menu a {
+.menu ul li {
    display: block;
    text-decoration: none;
-   color: #fff;
    font-size: 1.1em;
    padding: 15px;
-   border: 1px solid #058;
+   border-bottom: 1px solid #058;
 }
-.menu a:hover {
+.menu ul:nth-child(1) {
+    border-top: 1px solid #058;
+}
+.menu li:hover {
    background: #3ad;
+}
+.menu a {
+    color: #fff;
 }
 
 .grid {
@@ -199,9 +207,6 @@ label {
 @media all and (max-width: 1000px) {
     #toggle:checked ~ .grid {
         transform: translateX(0);
-    }
-    #toggle:checked ~ label:hover {
-        background: #3ad;
     }
     .grid {
         margin: 0 50px;
