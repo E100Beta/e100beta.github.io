@@ -119,7 +119,7 @@ label {
    top: 5px;
    left: 10px;
    display: block;
-   font-size: 3em;
+   font-size: 50px;
    color: #07a;
    z-index: 2;
    cursor: pointer;
@@ -215,12 +215,18 @@ label {
 }
 
 @media all and (max-width: 500px) {
+    label {
+        display: block;
+        position: static;
+        font-size: 60px;
+        margin: 10px;
+    }
     .menu {
         width: 100%;
         left: -100%;
     }
     .grid {
-        margin-right: 10px;
+        margin: 0 10px;
     }
     .primary-header h1 {
         font-size: 50px;
