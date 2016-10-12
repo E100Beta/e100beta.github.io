@@ -219,7 +219,10 @@ label {
         left: -100%;
     }
     .grid {
-        margin-right: 10px;
+        margin: 0 10px;
+    }
+    .primary-header {
+        margin-left: 70px;
     }
     .primary-header h1 {
         font-size: 50px;
