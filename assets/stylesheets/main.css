@@ -175,10 +175,11 @@ label {
 }
 .menu a:hover {
     color: #fff;
-    text-shadow: 0 0 3px #fff;
+    text-shadow: 0 0 3px rgba(255,255,255,.7);
 }
 .menu > footer {
-    margin-top: 100px;
+    position: absolute;
+    bottom: 10px;
 }
 
 .grid {
@@ -222,5 +223,11 @@ label {
     }
     .main-header h1 {
         font-size: 50px;
+    }
+}
+
+@media all and (max-width: 1000px) {
+    .main-header h1 {
+        font-size: 36px;
     }
 }
