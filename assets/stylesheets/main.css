@@ -58,17 +58,11 @@ table {
  **************************************
 */
 
-@viewport {
-  width: device-width;
-  zoom: 1;
-}
-
 /**** Basic stuff ****/
 body {
-    font-size: 16px/22px;
-    font-family: "Droid Sans", sans-serif;
+    font: 16px "Roboto", sans-serif;
     background: #fff;
-    color: #000;
+    color: #333;
 }
 
 *, *:before, *:after {
@@ -120,11 +114,13 @@ a:hover {
    opacity: 0;
 }
 label {
-   position: absolute;
-   top: 5px;
-   left: 10px;
    display: block;
+   position: absolute;
+   top: 10px;
+   left: 10px;
    font-size: 60px;
+   line-height: 50px;
+   padding: 0 5px 8px 5px;
    color: #07a;
    z-index: 2;
    cursor: pointer;
@@ -153,7 +149,6 @@ label {
     height: 100%;
     box-shadow: inset -3px 0 5px rgba(0,0,0,.3);
     z-index: 1;
-    /*transform: translateX(-100%);*/
     transition: transform .2s;
 }
 .menu ul {
@@ -175,35 +170,29 @@ label {
 .menu a {
     color: #fff;
 }
+.menu > footer {
+    margin-top: 100px;
+}
 
 .grid {
-    min-height: 400px;
-    margin-left: 70px;
-    margin-right: 25%;
     display: block;
+    margin-left: 75px;
+    margin-right: 25%;
     transition: transform .2s;
 }
-.primary-header {
-    padding: 5px 0;
+.main-header {
     border-bottom: 3px solid #07a;
     margin-bottom: 20px;
+    color: #07a;
+    font-family: "Roboto Mono";
 }
-.primary-header h1 {
+.main-header h1 {
     font-size: 70px;
-    font-family: "Roboto Mono", monospace;
+    margin: 0;
     font-weight: bold;
 }
-.primary-header p {
-    color: #07a;
-    font-family: "Droid Serif", serif;
+.main-header p {
     font-style: italic;
-}
-.grid > article {
-    flex: 5 1 75%;
-}
-.grid > footer {
-    display: block;
-    margin-top: 30px;
 }
 
 /**** Individual elements stuff ****/
@@ -221,10 +210,10 @@ label {
     .grid {
         margin: 0 10px;
     }
-    .primary-header {
-        margin-left: 70px;
+    .main-header {
+        margin-left: 75px;
     }
-    .primary-header h1 {
+    .main-header h1 {
         font-size: 50px;
     }
 }
