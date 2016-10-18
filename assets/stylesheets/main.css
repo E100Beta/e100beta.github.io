@@ -140,7 +140,7 @@ move out the menu and move the page to the right */
    transform: translateX(100%);
 }
 #toggle:checked ~ .grid {
-    transform: translateX(250px);
+    transform: translateX(200px);
 }
 /* Change appearence of a button when it's part of menu */
 #toggle:checked ~ label {
@@ -160,7 +160,8 @@ move out the menu and move the page to the right */
     box-shadow: inset 0 0 5px rgba(0,0,0,.3);
     color: #fff;
     z-index: 1;
-    transition: transform .2s;
+    transition: transform .3s;
+    transition-timing-function: ease-in-out;
 }
 /* Styles for menu itself */ 
 .menu ul {
@@ -199,10 +200,10 @@ Main layout
 **************************************/
 
 .grid {
-    display: block;
+    width: 75%;
     margin-left: 75px;
-    margin-right: 25%;
-    transition: transform .2s;
+    transition: transform .3s;
+    transition-timing-function: ease-in-out;
 }
 .main-header {
     border-bottom: 3px solid #07a;
@@ -219,19 +220,59 @@ Main layout
     font-style: italic;
 }
 
+.content {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+.content > article {
+    order: 1;
+    flex: 2 1 75%;
+}
+
+.content > aside {
+    padding: 15px;
+    margin-top: 30px;
+    margin-left: 15px;
+    box-shadow: 0 0 2px #07a;
+    border-radius: 3px;
+    order: 2;
+    flex: 1 2 25%;
+}
+
+.content > aside ul {
+    color: #07a;
+    list-style-type: square;
+    list-style-position: inside;
+}
+.content > aside a {
+    color: #555;
+    border-bottom: 1px solid #ddd;
+    transition: all ease-in-out .5s;
+}
+.content > aside a:hover {
+    color: #f50;
+    text-shadow: 0 0 3px rgba(255,85,0,.4);
+    border-bottom-color: rgba(255,85,0,.3);
+}
+
 /**** Individual elements stuff ***/
 
 /**************************************
 Adaptive design stuff 
 **************************************/
 
-@media all and (max-width: 1000px) {
+@media all and (max-width: 1024px) {
     #toggle:checked ~ .grid {
         transform: translateX(0);
     }
+    /* When mobile Chrome's or Firefox's url bar
+    goes up, the button slides up, too. This prevents it */
     #toggle:checked ~ label {
         position: fixed;
     }
+    /* Moving looks not right in mobile layouts. */
     label {
         position: absolute;
     }
@@ -242,8 +283,8 @@ Adaptive design stuff
     .menu li {
         display: block;
     } 
-
     .grid {
+        width: 90%;
         margin: 0 10px;
     }
     .main-header {
@@ -251,6 +292,19 @@ Adaptive design stuff
     }
     .main-header h1 {
         font-size: 50px;
+    }
+    .content {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .content > article {
+        flex: none;
+        order: 2;
+    }
+    .content > aside {
+        margin: 0 0 15px 0;
+        flex: none;
+        order: 1;
     }
 }
 
