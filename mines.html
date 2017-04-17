@@ -27,9 +27,19 @@
     input {
         width: 50px;
     }
+    #win_text {
+        z-index: 5;
+        position: absolute;
+        top: 40%;
+        left: 30%;
+        font: bold 100px sans-serif;
+        visibility: hidden;
+        filter: blur(30px);
+    }
     </style>
 </head>
 <body>
+    <span id="win_text">ПОБЕДА!!!</span>
     <ul>Правила:
         <li>Поле не может быть больше 30x15 и меньше 6x6</li>
         <li>Мин не может быть больше 2/3 количества клеток</li>
@@ -99,6 +109,7 @@ function initGame() {
         table.removeChild(table.firstChild);
     }
 
+    flags = 0;
     flagsLeft.textContent = game_info.mines;
 
     var grid = [];
@@ -251,6 +262,39 @@ function gameWin() {
             }
         }
     }
+    var body = document.querySelector("body");
+    var victory = document.querySelector("#win_text");
+    var blur = 30;
+    var sepia = 0;
+    var middle = 0;
+    var id = setInterval(function() {
+        if (sepia < 0) {
+            victory.style.visibility = "hidden";
+            victory.style.visibility = "";
+            body.style.filter = "";
+            victory.style.filter = "";
+            clearInterval(id);
+        } else {
+            if (middle === 0) {
+                blur -= 1;
+                sepia += 3;
+                body.style.filter = "sepia(" + sepia + "%)";
+                victory.style.visibility = "visible";
+                victory.style.filter = "blur(" + blur + "px)";
+            } else if (middle > 0 && middle < 40) {
+                middle += 1;
+            } else {
+                blur += 1;
+                sepia -= 3;
+                body.style.filter = "sepia(" + sepia + "%)";
+                victory.style.filter = "blur(" + blur + "px)";
+            }
+            if (sepia >= 90 && middle === 0) {
+                middle = 1;
+
+            }
+        }
+    },80);
 }
 
 
