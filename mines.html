@@ -84,6 +84,9 @@ function updatePreferences() {
     if (mines === 0) {
         mines = Math.floor(x*y/15);
     }
+    fieldX.value = x;
+    fieldY.value = y;
+    fieldMines.value = mines;
     return { x: x, y: x, mines: mines };
 
 }
