@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Mines clone</title>
+    <style>
+    body {
+        background: #fffff;
+    }
+    table {
+        border-collapse: collapse;
+    }
+    td,th {
+        border: 1px solid black;
+    }
+    td {
+        height: 45px;
+        width: 45px;
+        font-size: 20px;
+        vertical-align: middle;
+        text-align: center;
+        background-color: #cccccc;
+    }
+    td:hover {
+        background-color: #88dddd;
+    }
+    input {
+        width: 50px;
+    }
+    </style>
+</head>
+<body>
+    <ul>Правила:
+        <li>Поле не может быть больше 30x15 и меньше 6x6</li>
+        <li>Мин не может быть больше 2/3 количества клеток</li>
+    </ul>
+    <p>
+        <button id="reset-btn">Новая игра</button>
+        Поле: <input type="number" id="x" placeholder="6">x<input type="number" id="y" placeholder="6">,
+        Количество мин: <input type="number" id="mines" placeholder="10">
+    </p>
+    <p>
+        Флагов: <span id="flags-left"></span>
+    </p>
+    <table oncontextmenu="return false;">
+    </table>
+    TODO: первая клетка не можеть быть миной.
+</body>
+<script>
+
+var resetBtn = document.querySelector("#reset-btn");
+
+
+
+var flags = 0;
+var flagsLeft = document.querySelector("#flags-left");
+
+var game_info = updatePreferences();
+var minefield = initGame();
+
+resetBtn.addEventListener("click", function() {
+    game_info = updatePreferences();
+    minefield = initGame();
+});
+
+function updatePreferences() {
+    var fieldX = document.querySelector("#x");
+    var fieldY = document.querySelector("#y");
+    var fieldMines = document.querySelector("#mines");
+    var x = Number(fieldX.value);
+    var y = Number(fieldY.value);
+    var mines = Number(fieldMines.value);
+    if (x < 6) {
+        x = 6;
+    }
+    if (x > 30) {
+        x = 30;
+    }
+    if (y < 6) {
+        y = 6;
+    }
+    if (y > 30) {
+        y = 30;
+    }
+    if (mines > 2*x*y/3) {
+        mines = Math.floor(2*x*y/3);
+    }
+    return { x: x, y: x, mines: mines };
+
+}
+
+function initGame() {
+    var table = document.querySelector("table");
+
+    while (table.hasChildNodes()) {
+        table.removeChild(table.firstChild);
+    }
+
+    flagsLeft.textContent = game_info.mines;
+
+    var grid = [];
+    for (var i = 0; i < game_info.y; i++) {
+        var rowGrid = [];
+        var rowHtml = document.createElement("tr");
+        for (var j = 0; j < game_info.x; j++) {
+            var cell = document.createElement("td");
+            cell.addEventListener("click", openCell);
+            cell.addEventListener("contextmenu", flag);
+            rowHtml.appendChild(cell);
+            rowGrid.push(cell);
+        }
+        table.appendChild(rowHtml);
+        grid.push(rowGrid);
+    }
+
+    var field = makeField();
+    return { grid: grid, field: field};
+}
+
+function makeField() {
+    var field = [];
+    for (var i = 0; i < game_info.y; i++) {
+        var row = [];
+        for (var j = 0; j < game_info.x; j++) {
+            row.push(0);
+        }
+        field.push(row);
+    }
+
+    // Generate mine coordinates
+    var x = [];
+    for (var i = 0; i < game_info.mines; i++) {
+        x.push(Math.floor(Math.random() * game_info.x));
+    }
+    var y = [];
+    for (var i = 0; i < game_info.mines; i++) {
+        y.push(Math.floor(Math.random() * game_info.y));
+    }
+    // Check for repeating coordinates
+    for (var i = 0; i <  game_info.mines; i++) {
+        for (var j = 0; j < game_info.mines; j++) {
+            if (x[i] === x[j] && y[i] === y[j] && i !== j) {
+                x[i] = Math.floor(Math.random() * game_info.x);
+                y[i] = Math.floor(Math.random() * game_info.y);
+                i--;
+                break;
+            }
+        }
+    }
+
+    for (var i = 0; i < game_info.mines; i++) {
+        field[y[i]][x[i]] = -1;
+    }
+
+    // Create field
+    for (var i = 0; i < field.length; i++) {
+        for (var j = 0; j < field[i].length; j++) {
+            if (field[i][j] === -1) {
+                for (i1 = i-1; i1 <= i+1; i1++) {
+                    for (j1 = j-1; j1 <= j+1; j1++) {
+                        if (i1 >= 0 && i1 < field.length && j1 >= 0 && j1 < field[i].length && !(i1 === i && j1 === j) && field[i1][j1] !== -1) {
+                            field[i1][j1] += 1;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return field;
+}
+
+function flag() {
+    if (this.textContent === "" || this.textContent === "⚑") {
+        if (this.textContent !== "⚑") {
+            if (flags >= game_info.mines) {
+                return;
+            }
+            this.textContent = "⚑";
+            this.style.color = "green";
+            this.removeEventListener("click", openCell);
+            flags += 1;
+            flagsLeft.textContent = game_info.mines - flags;
+            if (flags === game_info.mines) {
+                checkWin();
+            }
+        } else {
+            this.textContent = "";
+            this.style.color = "black";
+            this.addEventListener("click", openCell);
+            flags -= 1;
+            flagsLeft.textContent = game_info.mines - flags;
+        }
+    }
+}
+
+function openCell() {
+    loop1:
+    for (var i = 0; i < minefield.grid.length; i++) {
+        for (var j = 0; j < minefield.grid[i].length; j++) {
+            if (this === minefield.grid[i][j]) {
+                if (minefield.field[i][j] === -1) {
+                    gameOver();
+                } else {
+                    openField(i,j);
+                }
+                break loop1;
+            }
+        }
+    }
+}
+function openField(i,j) {
+    minefield.grid[i][j].style.backgroundColor = "#ffffff";
+    if (minefield.field[i][j] > 0) {
+        minefield.grid[i][j].textContent = minefield.field[i][j];
+        return;
+    } else {
+        minefield.grid[i][j].textContent = " ";
+    }
+    for (var i1 = i-1; i1 <= i+1; i1++) {
+        for (var j1 = j-1; j1 <= j+1; j1++) {
+            if (i1 >= 0 && i1 < minefield.field.length && j1 >= 0 && j1 < minefield.field[i].length && !(i1 === i && j1 === j)) {
+                if (minefield.field[i1][j1] !== -1 && minefield.grid[i1][j1].textContent === "") {
+                    openField(i1,j1);
+                }
+            }
+        }
+    }
+}
+
+function gameOver() {
+    for (var i = 0; i < minefield.grid.length; i++) {
+        for (var j = 0; j < minefield.grid[i].length; j++) {
+            minefield.grid[i][j].removeEventListener("click", openCell);
+            minefield.grid[i][j].removeEventListener("contextmenu", flag);
+            if (minefield.field[i][j] === -1) {
+                minefield.grid[i][j].style.backgroundColor = "red";
+            }
+        }
+    }
+}
+function gameWin() {
+    for (var i = 0; i < minefield.grid.length; i++) {
+        for (var j = 0; j < minefield.grid[i].length; j++) {
+            minefield.grid[i][j].removeEventListener("click", openCell);
+            minefield.grid[i][j].removeEventListener("contextmenu",flag);
+            if (minefield.field[i][j] === -1) {
+                minefield.grid[i][j].style.backgroundColor = "green";
+            }
+        }
+    }
+}
+
+
+
+function checkWin() {
+    var correct = 0;
+    for (var i = 0; i < minefield.grid.length; i++) {
+        for (var j = 0; j < minefield.grid[i].length; j++) {
+            if (minefield.grid[i][j].textContent === "⚑") {
+                if (minefield.field[i][j] === -1) {
+                    correct += 1;
+                }
+            }
+        }
+    }
+    if (correct === game_info.mines) {
+        gameWin();
+    }
+}
+
+</script>
+</html>
