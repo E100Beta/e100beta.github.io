@@ -81,7 +81,7 @@ function updatePreferences() {
     }
     if (mines > 2*x*y/3) {
         mines = Math.floor(2*x*y/3);
-    } else {
+    if (mines === 0) {
         mines = Math.floor(x*y/15);
     }
     return { x: x, y: x, mines: mines };
