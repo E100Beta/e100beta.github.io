@@ -27,43 +27,34 @@
     input {
         width: 50px;
     }
-    #win_text {
-        z-index: 5;
-        position: absolute;
-        top: 40%;
-        left: 30%;
-        font: bold 100px sans-serif;
-        visibility: hidden;
-        filter: blur(30px);
-    }
     </style>
 </head>
 <body>
-    <span id="win_text">ПОБЕДА!!!</span>
-    <ul>Правила:
-        <li>Поле не может быть больше 30x15 и меньше 6x6</li>
-        <li>Мин не может быть больше 2/3 количества клеток</li>
+    <ul> Как играть:
+        <li> Левая кнопка мыши: открыть клетку </li>
+        <li> Правая кнопка мыши: поставить флаг </li>
+        <li> Победа наступает, когда флаги расставлены над всеми минами </li>
     </ul>
     <p>
         <button id="reset-btn">Новая игра</button>
-        Поле: <input type="number" id="x" placeholder="6">x<input type="number" id="y" placeholder="6">,
-        Количество мин: <input type="number" id="mines" placeholder="10">
+        Поле: <input type="number" id="x" value="6">x<input type="number" id="y" value="6">,
+        Количество мин: <input type="number" id="mines" value="7">
     </p>
     <p>
         Флагов: <span id="flags-left"></span>
     </p>
     <table oncontextmenu="return false;">
     </table>
-    TODO: первая клетка не можеть быть миной.
 </body>
 <script>
 
 var resetBtn = document.querySelector("#reset-btn");
 
-
-
 var flags = 0;
 var flagsLeft = document.querySelector("#flags-left");
+
+var game_info = undefined;
+var minefield = undefined;
 
 resetBtn.addEventListener("click", function() {
     game_info = updatePreferences();
@@ -77,23 +68,23 @@ function updatePreferences() {
     var x = Number(fieldX.value);
     var y = Number(fieldY.value);
     var mines = Number(fieldMines.value);
-    if (x < 6) {
-        x = 6;
+    if (x < 2) {
+        x = 2;
     }
-    if (x > 30) {
-        x = 30;
+    if (x > 100) {
+        x = 100;
     }
-    if (y < 6) {
-        y = 6;
+    if (y < 2) {
+        y = 2;
     }
-    if (y > 30) {
-        y = 30;
+    if (y > 100) {
+        y = 100;
     }
-    if (mines > 2*x*y/3) {
-        mines = Math.floor(2*x*y/3);
+    if (mines >= x*y ) {
+        mines = x*y-1;
     }
     if (mines === 0) {
-        mines = Math.floor(x*y/5);
+        mines = 1;
     }
     fieldX.value = x;
     fieldY.value = y;
@@ -127,11 +118,10 @@ function initGame() {
         grid.push(rowGrid);
     }
 
-    var field = makeField();
-    return { grid: grid, field: field};
+    return { grid: grid, field: undefined};
 }
 
-function makeField() {
+function makeField(not_y,not_x) {
     var field = [];
     for (var i = 0; i < game_info.y; i++) {
         var row = [];
@@ -153,7 +143,7 @@ function makeField() {
     // Check for repeating coordinates
     for (var i = 0; i <  game_info.mines; i++) {
         for (var j = 0; j < game_info.mines; j++) {
-            if (x[i] === x[j] && y[i] === y[j] && i !== j) {
+            if ((x[i] === x[j] || x[i] === not_x) && (y[i] === y[j] || y[i] === not_y) && i !== j) {
                 x[i] = Math.floor(Math.random() * game_info.x);
                 y[i] = Math.floor(Math.random() * game_info.y);
                 i--;
@@ -212,6 +202,9 @@ function openCell() {
     for (var i = 0; i < minefield.grid.length; i++) {
         for (var j = 0; j < minefield.grid[i].length; j++) {
             if (this === minefield.grid[i][j]) {
+                if (minefield.field == undefined) {
+                    minefield.field = makeField(i,j);
+                }
                 if (minefield.field[i][j] === -1) {
                     gameOver();
                 } else {
@@ -262,39 +255,6 @@ function gameWin() {
             }
         }
     }
-    var body = document.querySelector("body");
-    var victory = document.querySelector("#win_text");
-    var blur = 30;
-    var sepia = 0;
-    var middle = 0;
-    var id = setInterval(function() {
-        if (sepia < 0) {
-            victory.style.visibility = "hidden";
-            victory.style.visibility = "";
-            body.style.filter = "";
-            victory.style.filter = "";
-            clearInterval(id);
-        } else {
-            if (middle === 0) {
-                blur -= 1;
-                sepia += 3;
-                body.style.filter = "sepia(" + sepia + "%)";
-                victory.style.visibility = "visible";
-                victory.style.filter = "blur(" + blur + "px)";
-            } else if (middle > 0 && middle < 40) {
-                middle += 1;
-            } else {
-                blur += 1;
-                sepia -= 3;
-                body.style.filter = "sepia(" + sepia + "%)";
-                victory.style.filter = "blur(" + blur + "px)";
-            }
-            if (sepia >= 90 && middle === 0) {
-                middle = 1;
-
-            }
-        }
-    },80);
 }
 
 

@@ -1,0 +1,38 @@
+b {
+	font-weight: bold;
+}
+#logo {
+	position: absolute;
+}
+#control {
+	z-index: 1;
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	width: 300px;
+	background-color: rgba(0,0,10,.9);
+	color: white;
+}
+input[name="x"], input[name="y"] {
+	width: 60px;
+}
+#control table {
+	margin-top: 10px;
+}
+#control td {
+	padding: 3px;
+}
+#control p {
+	margin: 10px;
+}
+#copyright {
+	position: absolute;
+	bottom: 0;
+}
+#void-lnk {
+	color: #abc2ab;
+}
+canvas {
+	display: none;
+}
